@@ -1,31 +1,45 @@
-import {createElement} from './render.js'; 
+import { createElement } from "../framework/render.js";
 
-
-function createTaskListComponentTemplate() {
-    return (
-        `<div class="tasks">
-            <h3>Название блока</h3>
-            <ul class="task-container"></ul>
-        </div>`
-      );
+function createTaskListComponentTemplate(type, title) {
+  return `<div class="${type}-section task-column">
+      <h2 class="task-title">${title}</h2>
+      <ul class="tasks-container">
+      </ul>
+      ${
+        type === "trash"
+          ? `<button
+          type="button"
+          class="clear-button"
+          aria-label="Очистить корзину"
+        >
+          ✕ Очистить
+        </button>`
+          : ""
+      }
+    </div>`;
 }
 
-
 export default class TaskListComponent {
-  getTemplate() {
-    return createTaskListComponentTemplate();
+  constructor(type, title) {
+    this.type = type;
+    this.title = title;
   }
 
+  getTemplate() {
+    return createTaskListComponentTemplate(this.type, this.title);
+  }
 
   getElement() {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
 
-
     return this.element;
   }
 
+  getTaskContainer() {
+    return this.getElement().querySelector(".tasks-container");
+  }
 
   removeElement() {
     this.element = null;

@@ -1,28 +1,59 @@
-import { render, RenderPosition } from './framework/render.js'
-import HeaderComponent from './view/header-component.js'
-import AddTaskFormComponent from './view/add-task-form-component.js'
-import BoardTaskComponent from './view/boardtask-component.js'
-import TaskListComponent from './view/task-list-component.js'
-import TaskComponent from './view/task-component.js'
+import HeaderComponent from "./view/header-component.js";
+import TaskFormComponent from "./view/task-form-component.js";
+import TaskBoardComponent from "./view/task-board-component.js";
+import TaskComponent from "./view/task-component.js";
+import { render, RenderPosition } from "./framework/render.js";
 
-const bodyContainer = document.querySelector('.page-body');
-const addTaskContainer = document.querySelector('.add-new-task-component');
-const deskContainer = document.querySelector('.main-content');
+const bodyElement = document.querySelector(".board-app");
+const mainElement = document.querySelector(".board-app__main");
+const addTaskSection = document.querySelector(".add-task");
+const taskboardSection = document.querySelector(".taskboard");
 
-render(new HeaderComponent(), bodyContainer, RenderPosition.BEFOREBEGIN);
-render(new AddTaskFormComponent(), addTaskContainer);
-render(new BoardTaskComponent(), deskContainer);
+const headerComponent = new HeaderComponent();
+render(headerComponent, mainElement, RenderPosition.BEFOREBEGIN);
 
-const taskListContainer = document.querySelector(".tasks");
+const taskFormComponent = new TaskFormComponent();
+render(taskFormComponent, addTaskSection);
 
-for (let i = 0; i < 4; i++) {
-    const list = new TaskListComponent();
+const taskBoardComponent = new TaskBoardComponent();
+render(taskBoardComponent, taskboardSection);
 
-    render(list, taskListContainer);
-    
-    const taskContainer = list.getElement().querySelector(".task-container");
+const backlogTasks = ["Выучить JS", "Выучить React", "Сделать домашку"];
+const progressTasks = ["Выпить смузи", "Попить воды"];
+const readyTasks = ["Позвонить маме", "Погладить кота"];
+const trashTasks = ["Сходить погулять", "Прочитать Войну и Мир"];
 
-    for (let j = 0; j < 3; j++) {
-        render(new TaskComponent(), taskContainer);
-    }
-}
+const taskBoardElement = taskBoardComponent.getElement();
+
+const backlogContainer = taskBoardElement.querySelector(
+  ".backlog-section .tasks-container"
+);
+const progressContainer = taskBoardElement.querySelector(
+  ".progress-section .tasks-container"
+);
+const readyContainer = taskBoardElement.querySelector(
+  ".ready-section .tasks-container"
+);
+const trashContainer = taskBoardElement.querySelector(
+  ".trash-section .tasks-container"
+);
+
+backlogTasks.forEach((taskText) => {
+  const taskComponent = new TaskComponent(taskText);
+  render(taskComponent, backlogContainer);
+});
+
+progressTasks.forEach((taskText) => {
+  const taskComponent = new TaskComponent(taskText);
+  render(taskComponent, progressContainer);
+});
+
+readyTasks.forEach((taskText) => {
+  const taskComponent = new TaskComponent(taskText);
+  render(taskComponent, readyContainer);
+});
+
+trashTasks.forEach((taskText) => {
+  const taskComponent = new TaskComponent(taskText);
+  render(taskComponent, trashContainer);
+});

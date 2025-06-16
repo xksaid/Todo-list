@@ -1,28 +1,25 @@
-import {createElement} from './render.js'; 
+import { createElement } from "../framework/render.js";
 
-
-function createTaskComponentTemplate() {
-    return (
-        `<li class="task-item">Название первой задачи</li>`
-      );
+function createTaskComponentTemplate(text) {
+  return `<li class="task-item">${text}</li>`;
 }
 
-
 export default class TaskComponent {
-  getTemplate() {
-    return createTaskComponentTemplate();
+  constructor(text) {
+    this.text = text;
   }
 
+  getTemplate() {
+    return createTaskComponentTemplate(this.text);
+  }
 
   getElement() {
     if (!this.element) {
       this.element = createElement(this.getTemplate());
     }
 
-
     return this.element;
   }
-
 
   removeElement() {
     this.element = null;

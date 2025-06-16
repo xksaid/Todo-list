@@ -1,56 +1,80 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каримуллин Саид Ильнарович</title>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-
-<body>
-    <header class="header">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <title>Todo List</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
         <h1>Список задач</h1>
-    </header>
-    <main>
-        <div class="new-task">
-            <h1>Новая задача</h1>
-            <div class="add-task">
-                <input placeholder="Название задачи..." type="text">
-                <button>十 Добавить</button>
-            </div>
-        </div>
-        <div class="tasks">
-            <div class="list backlog">
-                <h3>Бэклог</h3>
-                <ul>
-                    <li>Выучить JS</li>
-                    <li>Выучить React</li>
-                    <li>Сделать домашку</li>
-                </ul>
-            </div>
-            <div class="list in-progress">
-                <h3>В процессе</h3>
-                <ul>
-                    <li>Выпить смузи</li>
-                    <li>Попить воды</li>
-                </ul>
-            </div>
-            <div class="list done">
-                <h3>Готово</h3>
-                <ul>
-                    <li>Позвонить маме</li>
-                    <li>Погладить кота</li>
-                </ul>
-            </div>
-            <div class="list trash">
-                <h3>Корзина</h3>
-                <ul>
-                    <li>Сходить погулять</li>
-                    <li>Прочитать Войну и Мир</li>
-                </ul>
-                <button class="clear-btn" type="button">✕ Очистить</button>
-            </div>
-        </div>
-    </main>
-</body>
+      </header>
+
+      <form class="task-wrapper">
+        <label for="new-task">Новая задача</label>
+        <input
+          type="text"
+          id="new-task"
+          name="new-task"
+          placeholder="Название задачи..."
+          required
+        />
+        <button type="submit" class="add-new-task-button">
+          <span class="plus-icon">+</span> Добавить
+        </button>
+      </form>
+
+      <main>
+        <section class="task-sections">
+          <div class="backlog-section task-column">
+            <h2 class="task-title">Бэклог</h2>
+            <ul class="tasks-container">
+              <li class="task-item">Выучить JS</li>
+              <li class="task-item">Выучить React</li>
+              <li class="task-item">Сделать домашку</li>
+            </ul>
+          </div>
+
+          <div class="progress-section task-column">
+            <h2 class="task-title">В процессе</h2>
+            <ul class="tasks-container">
+              <li class="task-item">Выпить смузи</li>
+              <li class="task-item">Попить воды</li>
+            </ul>
+          </div>
+
+          <div class="ready-section task-column">
+            <h2 class="task-title">Готово</h2>
+            <ul class="tasks-container">
+              <li class="task-item">Позвонить маме</li>
+              <li class="task-item">Погладить кота</li>
+            </ul>
+          </div>
+
+          <div class="trash-section task-column">
+            <h2 class="task-title">Корзина</h2>
+            <ul class="tasks-container">
+              <li class="task-item">Сходить погулять</li>
+              <li class="task-item">Прочитать Войну и Мир</li>
+            </ul>
+            <button
+              type="button"
+              class="clear-button"
+              aria-label="Очистить корзину"
+            >
+              ✕ Очистить
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
