@@ -2,42 +2,77 @@ import TaskBoardComponent from "../view/task-board-component.js";
 import TaskListComponent from "../view/task-list-component.js";
 import TaskItemComponent from "../view/task-item-component.js";
 import DeleteButton from "../view/delete-button.js";
+import EmptyTaskListComponent from "../view/empty-task-list-component.js";
 import { render } from "../framework/render.js";
-import { tasksModel } from "../model/task-model.js";
 import { Status } from "../const.js";
 
 export default class TasksBoardPresenter {
-  constructor({ boardContainer }) {
-    this.boardContainer = boardContainer;
-    this.tasksModel = tasksModel;
+  #boardContainer;
+  #tasksModel;
+  #taskBoardComponent;
+
+  constructor({ boardContainer, tasksModel }) {
+    this.#boardContainer = boardContainer;
+    this.#tasksModel = tasksModel;
   }
 
   init() {
-    const taskBoardComponent = new TaskBoardComponent();
-    render(taskBoardComponent, this.boardContainer);
+    this.#taskBoardComponent = new TaskBoardComponent();
+    render(this.#taskBoardComponent, this.#boardContainer);
+    this.#renderBoard();
+  }
 
-    const allTasks = this.tasksModel.getTasks();
+  #renderBoard() {
+    const allTasks = this.#tasksModel.tasks;
 
     Object.values(Status).forEach(({ key, label }) => {
       const tasksInStatus = allTasks.filter((task) => task.status === key);
-      const taskListComponent = new TaskListComponent(label, key);
-      render(
-        taskListComponent,
-        taskBoardComponent.getElement().querySelector(".task-list")
-      );
-
-      const taskListContainer = taskListComponent
-        .getElement()
-        .querySelector(".task-list");
-
-      tasksInStatus.forEach((task) => {
-        const taskItemComponent = new TaskItemComponent({ task });
-        render(taskItemComponent, taskListContainer);
-      });
 
       if (key === Status.TRASH.key) {
-        render(new DeleteButton(), taskListComponent.getElement());
+        this.#renderTrashList(label, key, tasksInStatus);
+      } else {
+        this.#renderTasksList(label, key, tasksInStatus);
       }
     });
+  }
+
+  #renderTasksList(label, statusKey, tasks) {
+    this.#renderTaskList(label, statusKey, tasks);
+  }
+
+  #renderTrashList(label, statusKey, tasks) {
+    const taskListComponent = this.#renderTaskList(label, statusKey, tasks);
+    render(new DeleteButton(), taskListComponent.element);
+  }
+
+  #renderTaskList(label, statusKey, tasks) {
+    const taskListComponent = new TaskListComponent(label, statusKey);
+    render(
+      taskListComponent,
+      this.#taskBoardComponent.element.querySelector(".task-list")
+    );
+
+    const taskListContainer =
+      taskListComponent.element.querySelector(".task-list");
+
+    if (tasks.length === 0) {
+      this.#renderEmptyStub(taskListContainer);
+    } else {
+      tasks.forEach((task) => {
+        this.#renderTask(task, taskListContainer);
+      });
+    }
+
+    return taskListComponent;
+  }
+
+  #renderTask(task, container) {
+    const taskComponent = new TaskItemComponent({ task });
+    render(taskComponent, container);
+  }
+
+  #renderEmptyStub(container) {
+    const emptyStubComponent = new EmptyTaskListComponent();
+    render(emptyStubComponent, container);
   }
 }

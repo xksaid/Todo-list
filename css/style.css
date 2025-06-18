@@ -138,3 +138,11 @@ ul {
   display: inline-block;
   transform: rotate(45deg);
 }
+
+.task-list__empty {
+  padding: 12px;
+  color: #aaa;
+  text-align: center;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+}

@@ -1,18 +1,7 @@
-import { createElement } from "../framework/render.js";
+import { AbstractComponent } from "../framework/view/abstract-component.js";
 
-export default class DeleteButton {
-  getTemplate() {
+export default class DeleteButton extends AbstractComponent {
+  get template() {
     return `<button class="clear-trash-button">✕ Очистить</button>`;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
