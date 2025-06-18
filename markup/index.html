@@ -9,72 +9,53 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
     />
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="icon" href="favicon.ico" type="image/x-icon" />
-    <title>Todo List</title>
+    <title>Каримуллин Саид Ильнарович</title>
   </head>
   <body>
     <div class="container">
-      <header>
-        <h1>Список задач</h1>
-      </header>
+      <h1>Список задач</h1>
 
-      <form class="task-wrapper">
-        <label for="new-task">Новая задача</label>
-        <input
-          type="text"
-          id="new-task"
-          name="new-task"
-          placeholder="Название задачи..."
-          required
-        />
-        <button type="submit" class="add-new-task-button">
-          <span class="plus-icon">+</span> Добавить
-        </button>
-      </form>
+      <div class="task-wrapper">
+        <p>Новая задача</p>
+        <input type="text" placeholder="Название задачи..." />
+        <button class="add-new-task-button">+ Добавить</button>
+      </div>
 
-      <main>
-        <section class="task-sections">
-          <div class="backlog-section task-column">
-            <h2 class="task-title">Бэклог</h2>
-            <ul class="tasks-container">
-              <li class="task-item">Выучить JS</li>
-              <li class="task-item">Выучить React</li>
-              <li class="task-item">Сделать домашку</li>
-            </ul>
-          </div>
+      <ul class="task-list">
+        <li class="backlog-section task-column">
+          <span class="task-title">Бэклог</span>
+          <ul>
+            <li class="task-item">Выучить JS</li>
+            <li class="task-item">Выучить React</li>
+            <li class="task-item">Сделать домашку</li>
+          </ul>
+        </li>
 
-          <div class="progress-section task-column">
-            <h2 class="task-title">В процессе</h2>
-            <ul class="tasks-container">
-              <li class="task-item">Выпить смузи</li>
-              <li class="task-item">Попить воды</li>
-            </ul>
-          </div>
+        <li class="progress-section task-column">
+          <span class="task-title">В процессе</span>
+          <ul>
+            <li class="task-item">Выпить смузи</li>
+            <li class="task-item">Попить воды</li>
+          </ul>
+        </li>
 
-          <div class="ready-section task-column">
-            <h2 class="task-title">Готово</h2>
-            <ul class="tasks-container">
-              <li class="task-item">Позвонить маме</li>
-              <li class="task-item">Погладить кота</li>
-            </ul>
-          </div>
+        <li class="ready-section task-column">
+          <span class="task-title">Готово</span>
+          <ul>
+            <li class="task-item">Позвонить маме</li>
+            <li class="task-item">Погладить кота</li>
+          </ul>
+        </li>
 
-          <div class="trash-section task-column">
-            <h2 class="task-title">Корзина</h2>
-            <ul class="tasks-container">
-              <li class="task-item">Сходить погулять</li>
-              <li class="task-item">Прочитать Войну и Мир</li>
-            </ul>
-            <button
-              type="button"
-              class="clear-button"
-              aria-label="Очистить корзину"
-            >
-              ✕ Очистить
-            </button>
-          </div>
-        </section>
-      </main>
+        <li class="trash-section task-column">
+          <span class="task-title">Корзина</span>
+          <ul>
+            <li class="task-item">Сходить погулять</li>
+            <li class="task-item">Прочитать Войну и Мир</li>
+          </ul>
+          <button class="clear-button">✕ Очистить</button>
+        </li>
+      </ul>
     </div>
   </body>
 </html>

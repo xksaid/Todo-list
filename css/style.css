@@ -21,11 +21,8 @@ h1 {
   margin: 50px 50px 20px 70px;
 }
 
-.add-task label {
-  display: block;
-  font-size: 25px;
-  font-weight: bold;
-  padding: 10px 0 15px;
+.add-task h2 {
+  padding: 10px 0px 15px;
   margin: 0;
 }
 
@@ -37,48 +34,32 @@ h1 {
   margin-right: 5px;
 }
 
-.add-new-task-button {
+.add-task button {
   background-color: #3b82f6;
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 10px 20px;
+  padding: 10px 50px 10px 10px;
   cursor: pointer;
 }
 
-.taskboard {
+.task-list {
   display: flex;
+  flex: 100%;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 0;
-  margin: 50px 20px;
-  list-style-type: none;
 }
 
-.task-sections {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
-}
-
-.task-column {
-  flex: 1;
-  min-width: 220px;
+.task-list li.task-column {
+  flex: 0 0 25%;
   max-width: 25%;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 10px;
+  box-sizing: border-box;
+  margin: 0px 0px 70px 0px;
 }
 
-.tasks-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 0;
-  margin: 50px 20px;
+ul {
   list-style-type: none;
+  padding: 10px 15px;
 }
 
 .task-item {
@@ -86,6 +67,9 @@ h1 {
   border-radius: 8px;
   margin: 10px 10px 10px 5px;
   padding: 20px 100px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .task-title {
@@ -94,43 +78,43 @@ h1 {
   margin: 10px 20px 10px;
 }
 
-.backlog-section .task-title {
+.backlog .task-title {
   background-color: #e0e0e0;
   color: #404040;
 }
 
-.backlog-section .task-item {
+.backlog .task-item {
   border-left: 5px solid #e0e0e0;
 }
 
-.progress-section .task-title {
+.in-progress .task-title {
   background-color: #c4e5ff;
   color: #3870ff;
 }
 
-.progress-section .task-item {
+.in-progress .task-item {
   border-left: 5px solid #c4e5ff;
 }
 
-.ready-section .task-title {
+.completed .task-title {
   background-color: #b1fcb7;
   color: #00b533;
 }
 
-.ready-section .task-item {
+.completed .task-item {
   border-left: 5px solid #b1fcb7;
 }
 
-.trash-section .task-title {
+.trash .task-title {
   background-color: #fcdcdc;
   color: #ff2929;
 }
 
-.trash-section .task-item {
+.trash .task-item {
   border-left: 5px solid #fcdcdc;
 }
 
-.clear-button {
+.clear-trash-button {
   background-color: #d66d6d;
   color: white;
   border: none;
@@ -138,4 +122,19 @@ h1 {
   padding: 15px 100px;
   margin: 0px 0px 0px 20px;
   cursor: pointer;
+}
+
+.task__edit {
+  background-color: transparent;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 20px;
+}
+
+.task__edit::before {
+  content: "/";
+  display: inline-block;
+  transform: rotate(45deg);
 }
