@@ -82,7 +82,11 @@ export default class TasksBoardPresenter {
   }
 
   #renderTaskList(label, statusKey, tasks) {
-    const taskListComponent = new TaskListComponent(label, statusKey);
+    const taskListComponent = new TaskListComponent({
+      title: label,
+      status: statusKey,
+      onTaskDrop: this.#handleTaskDrop.bind(this),
+    });
     render(
       taskListComponent,
       this.#taskBoardComponent.element.querySelector(".task-list")
@@ -119,5 +123,9 @@ export default class TasksBoardPresenter {
 
   #clearBoard() {
     this.#taskBoardComponent.element.innerHTML = "";
+  }
+
+  #handleTaskDrop(taskId, newStatus, targetTaskId = null) {
+    this.#tasksModel.moveTaskTo(taskId, newStatus, targetTaskId);
   }
 }

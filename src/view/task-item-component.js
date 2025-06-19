@@ -18,6 +18,7 @@ export default class TaskItemComponent extends AbstractComponent {
   constructor({ task }) {
     super();
     this.#task = task;
+    this.#afterCreateElement();
   }
 
   get template() {
@@ -26,5 +27,23 @@ export default class TaskItemComponent extends AbstractComponent {
 
   get task() {
     return this.#task;
+  }
+
+  #afterCreateElement() {
+    this.element.setAttribute("draggable", true);
+    this.element.dataset.id = this.#task.id;
+
+    this.element.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", this.#task.id);
+    });
+
+    this.element.addEventListener("dragenter", (event) => {
+      event.preventDefault();
+      this.element.classList.add("drag-over");
+    });
+
+    this.element.addEventListener("dragleave", () => {
+      this.element.classList.remove("drag-over");
+    });
   }
 }
