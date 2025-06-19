@@ -14,7 +14,15 @@ const tasksBoardPresenter = new TasksBoardPresenter({
   tasksModel,
 });
 
+const formAddTaskComponent = new TaskFormComponent({
+  onClick: handleNewTaskButtonClick,
+});
+
+function handleNewTaskButtonClick() {
+  tasksBoardPresenter.createTask();
+}
+
 render(new HeaderComponent(), bodyContainer, RenderPosition.BEFOREBEGIN);
-render(new TaskFormComponent(), formContainer);
+render(formAddTaskComponent, formContainer);
 
 tasksBoardPresenter.init();

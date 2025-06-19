@@ -14,16 +14,33 @@ export default class TasksBoardPresenter {
   constructor({ boardContainer, tasksModel }) {
     this.#boardContainer = boardContainer;
     this.#tasksModel = tasksModel;
+
+    this.#tasksModel.addObserver(this.#handleModelChange.bind(this));
+  }
+
+  get tasks() {
+    return this.#tasksModel.tasks;
   }
 
   init() {
-    this.#taskBoardComponent = new TaskBoardComponent();
-    render(this.#taskBoardComponent, this.#boardContainer);
     this.#renderBoard();
   }
 
+  createTask() {
+    const taskTitle = document.querySelector("#add-task").value.trim();
+    if (!taskTitle) {
+      return;
+    }
+
+    this.#tasksModel.addTask(taskTitle);
+    document.querySelector("#add-task").value = "";
+  }
+
   #renderBoard() {
-    const allTasks = this.#tasksModel.tasks;
+    this.#taskBoardComponent = new TaskBoardComponent();
+    render(this.#taskBoardComponent, this.#boardContainer);
+
+    const allTasks = this.tasks;
 
     Object.values(Status).forEach(({ key, label }) => {
       const tasksInStatus = allTasks.filter((task) => task.status === key);
@@ -42,7 +59,26 @@ export default class TasksBoardPresenter {
 
   #renderTrashList(label, statusKey, tasks) {
     const taskListComponent = this.#renderTaskList(label, statusKey, tasks);
-    render(new DeleteButton(), taskListComponent.element);
+    const deleteButton = new DeleteButton();
+
+    render(deleteButton, taskListComponent.element);
+    const buttonElement = deleteButton.element;
+
+    const updateButtonVisibility = () => {
+      const updatedTasks = this.#tasksModel.getTasksByStatus(statusKey);
+      if (updatedTasks.length === 0) {
+        buttonElement.style.display = "none";
+      } else {
+        buttonElement.style.display = "block";
+      }
+    };
+
+    updateButtonVisibility();
+
+    buttonElement.addEventListener("click", () => {
+      this.#tasksModel.deleteTasksByStatus(statusKey);
+      updateButtonVisibility();
+    });
   }
 
   #renderTaskList(label, statusKey, tasks) {
@@ -74,5 +110,14 @@ export default class TasksBoardPresenter {
   #renderEmptyStub(container) {
     const emptyStubComponent = new EmptyTaskListComponent();
     render(emptyStubComponent, container);
+  }
+
+  #handleModelChange() {
+    this.#clearBoard();
+    this.#renderBoard();
+  }
+
+  #clearBoard() {
+    this.#taskBoardComponent.element.innerHTML = "";
   }
 }
