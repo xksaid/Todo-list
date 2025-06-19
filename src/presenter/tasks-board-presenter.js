@@ -3,54 +3,66 @@ import TaskListComponent from "../view/task-list-component.js";
 import TaskItemComponent from "../view/task-item-component.js";
 import DeleteButton from "../view/delete-button.js";
 import EmptyTaskListComponent from "../view/empty-task-list-component.js";
+import LoadingViewComponent from "../view/loading-view-component.js";
 import { render } from "../framework/render.js";
-import { Status } from "../const.js";
+import { Status, UpdateType } from "../const.js";
 
 export default class TasksBoardPresenter {
   #boardContainer;
   #tasksModel;
   #taskBoardComponent;
+  #resetButtonComponent;
+  #loadingComponent;
 
-  constructor({ boardContainer, tasksModel }) {
+  constructor({ boardContainer, tasksModel, resetButtonComponent = null }) {
     this.#boardContainer = boardContainer;
     this.#tasksModel = tasksModel;
-
-    this.#tasksModel.addObserver(this.#handleModelChange.bind(this));
+    this.#resetButtonComponent = resetButtonComponent;
+    this.#tasksModel.addObserver(this.#handleModelEvent.bind(this));
   }
 
   get tasks() {
     return this.#tasksModel.tasks;
   }
 
-  init() {
+  async init() {
+    this.#loadingComponent = new LoadingViewComponent();
+    render(this.#loadingComponent, this.#boardContainer);
+    await this.#tasksModel.init();
+    this.#loadingComponent.element.remove();
     this.#renderBoard();
   }
 
-  createTask() {
+  async createTask() {
     const taskTitle = document.querySelector("#add-task").value.trim();
     if (!taskTitle) {
       return;
     }
-
-    this.#tasksModel.addTask(taskTitle);
-    document.querySelector("#add-task").value = "";
+    try {
+      await this.#tasksModel.addTask(taskTitle);
+      document.querySelector("#add-task").value = "";
+    } catch (err) {
+      // Ошибка обработана, но вывод в консоль убран
+    }
   }
 
   #renderBoard() {
     this.#taskBoardComponent = new TaskBoardComponent();
     render(this.#taskBoardComponent, this.#boardContainer);
-
     const allTasks = this.tasks;
-
     Object.values(Status).forEach(({ key, label }) => {
-      const tasksInStatus = allTasks.filter((task) => task.status === key);
-
+      const tasksByStatus = allTasks.filter((task) => task.status === key);
       if (key === Status.TRASH.key) {
-        this.#renderTrashList(label, key, tasksInStatus);
+        this.#renderTrashList(label, key, tasksByStatus);
       } else {
-        this.#renderTasksList(label, key, tasksInStatus);
+        this.#renderTasksList(label, key, tasksByStatus);
       }
     });
+    if (this.#resetButtonComponent) {
+      this.#resetButtonComponent.toggleDisabled(
+        !this.#tasksModel.hasBasketTasks()
+      );
+    }
   }
 
   #renderTasksList(label, statusKey, tasks) {
@@ -60,50 +72,37 @@ export default class TasksBoardPresenter {
   #renderTrashList(label, statusKey, tasks) {
     const taskListComponent = this.#renderTaskList(label, statusKey, tasks);
     const deleteButton = new DeleteButton();
-
     render(deleteButton, taskListComponent.element);
-    const buttonElement = deleteButton.element;
-
-    const updateButtonVisibility = () => {
-      const updatedTasks = this.#tasksModel.getTasksByStatus(statusKey);
-      if (updatedTasks.length === 0) {
-        buttonElement.style.display = "none";
-      } else {
-        buttonElement.style.display = "block";
-      }
+    const btnEl = deleteButton.element;
+    const updateVisibility = () => {
+      btnEl.style.display = this.#tasksModel.getTasksByStatus(statusKey).length
+        ? "block"
+        : "none";
     };
-
-    updateButtonVisibility();
-
-    buttonElement.addEventListener("click", () => {
-      this.#tasksModel.deleteTasksByStatus(statusKey);
-      updateButtonVisibility();
+    updateVisibility();
+    btnEl.addEventListener("click", async () => {
+      await this.#handleClearBasketClick();
+      updateVisibility();
     });
   }
 
   #renderTaskList(label, statusKey, tasks) {
-    const taskListComponent = new TaskListComponent({
+    const listComponent = new TaskListComponent({
       title: label,
       status: statusKey,
       onTaskDrop: this.#handleTaskDrop.bind(this),
     });
     render(
-      taskListComponent,
+      listComponent,
       this.#taskBoardComponent.element.querySelector(".task-list")
     );
-
-    const taskListContainer =
-      taskListComponent.element.querySelector(".task-list");
-
+    const container = listComponent.element.querySelector(".task-list");
     if (tasks.length === 0) {
-      this.#renderEmptyStub(taskListContainer);
+      this.#renderEmptyStub(container);
     } else {
-      tasks.forEach((task) => {
-        this.#renderTask(task, taskListContainer);
-      });
+      tasks.forEach((task) => this.#renderTask(task, container));
     }
-
-    return taskListComponent;
+    return listComponent;
   }
 
   #renderTask(task, container) {
@@ -112,20 +111,39 @@ export default class TasksBoardPresenter {
   }
 
   #renderEmptyStub(container) {
-    const emptyStubComponent = new EmptyTaskListComponent();
-    render(emptyStubComponent, container);
+    const stub = new EmptyTaskListComponent();
+    render(stub, container);
   }
 
-  #handleModelChange() {
-    this.#clearBoard();
-    this.#renderBoard();
+  #handleModelEvent(updateType, payload) {
+    switch (updateType) {
+      case UpdateType.MINOR:
+      case UpdateType.MAJOR:
+      case UpdateType.UPDATE_TASK:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      default:
+        return;
+    }
   }
 
   #clearBoard() {
-    this.#taskBoardComponent.element.innerHTML = "";
+    if (this.#taskBoardComponent) {
+      this.#taskBoardComponent.element.innerHTML = "";
+    }
   }
 
-  #handleTaskDrop(taskId, newStatus, targetTaskId = null) {
-    this.#tasksModel.moveTaskTo(taskId, newStatus, targetTaskId);
+  async #handleTaskDrop(taskId, newStatus, targetTaskId = null) {
+    try {
+      await this.#tasksModel.updateTaskStatus(taskId, newStatus);
+      this.#tasksModel.moveTaskTo(taskId, newStatus, targetTaskId);
+    } catch (err) {}
+  }
+
+  async #handleClearBasketClick() {
+    try {
+      await this.#tasksModel.clearBasketTasks();
+    } catch (err) {}
   }
 }
